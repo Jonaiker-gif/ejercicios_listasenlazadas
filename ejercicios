@@ -2,7 +2,6 @@
 # 🟢EJERCICIOS BÁSICOS - LISTA SIMPLEMENTE ENLAZADA
 # ============================================================================
 
-
 """
 EJERCICIO 1: Contar elementos
 Dificultad: 🟢 Básico
@@ -980,71 +979,7 @@ Para las siguientes operaciones:
 Usa el módulo 'time' para medir el tiempo.
 Imprime los resultados en una tabla comparativa.
 """
-
-import time
-import random
-
-def benchmark_data_structures():
-    n = 1000
-    results = {}
-
-    # Estructuras a probar
-    structures = {
-        "Python List": list(),
-        "Singly Linked": SLinkedList(), # Asumiendo implementación previa
-        "Doubly Linked": DLinkedList()  # Asumiendo implementación previa
-    }
-
-    operations = [
-        "Insert Start", "Insert End", 
-        "Delete Start", "Delete End", 
-        "Random Access"
-    ]
-
-    for name, ds in structures.items():
-        results[name] = {}
-        
-        # 1. Inserción al inicio
-        start = time.perf_counter()
-        for i in range(n):
-            if name == "Python List": ds.insert(0, i)
-            else: ds.add_first(i) # Método equivalente
-        results[name]["Insert Start"] = time.perf_counter() - start
-
-        # 2. Inserción al final
-        start = time.perf_counter()
-        for i in range(n):
-            if name == "Python List": ds.append(i)
-            else: ds.add_last(i)
-        results[name]["Insert End"] = time.perf_counter() - start
-
-        # 3. Acceso Aleatorio (Antes de borrar para tener elementos)
-        start = time.perf_counter()
-        for _ in range(n):
-            idx = random.randint(0, n - 1)
-            _ = ds[idx] if name == "Python List" else ds.get(idx)
-        results[name]["Random Access"] = time.perf_counter() - start
-
-        # 4. Eliminación al inicio
-        start = time.perf_counter()
-        for _ in range(n):
-            if name == "Python List": ds.pop(0)
-            else: ds.remove_first()
-        results[name]["Delete Start"] = time.perf_counter() - start
-
-        # 5. Eliminación al final
-        start = time.perf_counter()
-        for _ in range(n):
-            if name == "Python List": ds.pop()
-            else: ds.remove_last()
-        results[name]["Delete End"] = time.perf_counter() - start
-
-    # Imprimir Tabla
-    print(f"{'Operación':<15} | {'Py List':<10} | {'Singly':<10} | {'Doubly':<10}")
-    print("-" * 55)
-    for op in operations:
-        print(f"{op:<15} | {results['Python List'][op]:.5f} | "
-              f"{results['Singly Linked'][op]:.5f} | {results['Doubly Linked'][op]:.5f}")
+#Este ejercicio no lo pude comprender, así que pasé al siguente.
 
 
 """
