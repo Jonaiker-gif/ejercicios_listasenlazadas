@@ -1,3 +1,6 @@
+Pazmiño Bazurto Carlos Jonaiker 
+19/12/2025
+19/20 ejercicios completados 
 # ============================================================================
 # 🟢EJERCICIOS BÁSICOS - LISTA SIMPLEMENTE ENLAZADA
 # ============================================================================
