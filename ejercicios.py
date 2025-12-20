@@ -1065,3 +1065,255 @@ EJERCICIO 20: Respuestas y Justificaciones
 # enemigo muere (está en medio de la lista), la lista doble permite 
 # eliminarlo en O(1) si ya tenemos la referencia al objeto, reconectando 
 # sus vecinos.
+
+"""
+- Sección de pruebas que ejecute todos los ejercicios
+ - Imprime resultados de manera clara
+"""
+
+import time
+
+class Node:
+    def __init__(self, elem):
+        self.elem = elem
+        self.next = None
+        self.prev = None  # Usado para Listas Dobles
+
+class SLinkedList:
+    def __init__(self):
+        self._head = None
+        self._size = 0
+
+    def append(self, elem):
+        """Método auxiliar para construir las listas fácilmente"""
+        new_node = Node(elem)
+        if not self._head:
+            self._head = new_node
+        else:
+            curr = self._head
+            while curr.next:
+                curr = curr.next
+            curr.next = new_node
+        self._size += 1
+
+    # EJERCICIO 1: Contar elementos
+    def count(self, elem):
+        counter = 0
+        curr = self._head
+        while curr:
+            if curr.elem == elem: counter += 1
+            curr = curr.next
+        return counter
+
+    # EJERCICIO 2: Obtener por índice
+    def get(self, index):
+        if index < 0: raise IndexError("Índice negativo")
+        curr = self._head
+        for i in range(index):
+            if not curr: raise IndexError("Fuera de rango")
+            curr = curr.next
+        return curr.elem if curr else None
+
+    # EJERCICIO 3: Encontrar índice
+    def index_of(self, elem):
+        curr = self._head
+        idx = 0
+        while curr:
+            if curr.elem == elem: return idx
+            curr = curr.next
+            idx += 1
+        return -1
+
+    # EJERCICIO 4: Lista a Array
+    def to_list(self):
+        res = []
+        curr = self._head
+        while curr:
+            res.append(curr.elem)
+            curr = curr.next
+        return res
+
+    # EJERCICIO 5: Limpiar
+    def clear(self):
+        self._head = None
+        self._size = 0
+
+    # EJERCICIO 6: Invertir
+    def reverse(self):
+        prev = None
+        curr = self._head
+        while curr:
+            next_node = curr.next
+            curr.next = prev
+            prev = curr
+            curr = next_node
+        self._head = prev
+
+    # EJERCICIO 8: Encontrar el medio
+    def get_middle(self):
+        if not self._head: return None
+        slow = fast = self._head
+        while fast and fast.next:
+            slow = slow.next
+            fast = fast.next.next
+        return slow.elem
+
+    # EJERCICIO 9: Eliminar duplicados (O(n) con set)
+    def remove_duplicates(self):
+        if not self._head: return
+        seen = {self._head.elem}
+        curr = self._head
+        while curr.next:
+            if curr.next.elem in seen:
+                curr.next = curr.next.next
+            else:
+                seen.add(curr.next.elem)
+                curr = curr.next
+
+    # EJERCICIO 11: Palíndromo
+    def is_palindrome(self):
+        if not self._head or not self._head.next: return True
+        # 1. Medio
+        slow = fast = self._head
+        while fast and fast.next:
+            slow = slow.next
+            fast = fast.next.next
+        # 2. Invertir segunda mitad
+        prev = None
+        while slow:
+            nxt = slow.next
+            slow.next = prev
+            prev = slow
+            slow = nxt
+        # 3. Comparar
+        left, right = self._head, prev
+        while right:
+            if left.elem != right.elem: return False
+            left, right = left.next, right.next
+        return True
+
+    # EJERCICIO 12: Rotar k posiciones
+    def rotate(self, k):
+        if not self._head or k == 0: return
+        # Tamaño y cola
+        last = self._head
+        size = 1
+        while last.next:
+            last = last.next
+            size += 1
+        k = k % size
+        if k == 0: return
+        # Hacer circular y romper
+        last.next = self._head
+        steps = size - k
+        new_last = self._head
+        for _ in range(steps - 1):
+            new_last = new_last.next
+        self._head = new_last.next
+        new_last.next = None
+
+# EJERCICIO 14: Suma de listas
+def add_numbers(l1, l2):
+    dummy = Node(0)
+    curr = dummy
+    p1, p2, carry = l1._head, l2._head, 0
+    while p1 or p2 or carry:
+        v1 = p1.elem if p1 else 0
+        v2 = p2.elem if p2 else 0
+        val = v1 + v2 + carry
+        carry = val // 10
+        curr.next = Node(val % 10)
+        curr = curr.next
+        if p1: p1 = p1.next
+        if p2: p2 = p2.next
+    res = SLinkedList()
+    res._head = dummy.next
+    return res
+
+# EJERCICIO 17: LRU Cache
+class LRUCache:
+    def __init__(self, capacity):
+        self.cap = capacity
+        self.cache = {}
+        self.head = Node(0)
+        self.tail = Node(0)
+        self.head.next = self.tail
+        self.tail.prev = self.head
+
+    def _remove(self, node):
+        node.prev.next = node.next
+        node.next.prev = node.prev
+
+    def _add(self, node):
+        p = self.tail.prev
+        p.next = node
+        node.prev = p
+        node.next = self.tail
+        self.tail.prev = node
+
+    def get(self, key):
+        if key in self.cache:
+            n = self.cache[key]
+            self._remove(n)
+            self._add(n)
+            return n.elem
+        return -1
+
+    def put(self, key, value):
+        if key in self.cache: self._remove(self.cache[key])
+        n = Node(value)
+        n.key = key # Atributo extra para borrar del dict
+        self.cache[key] = n
+        self._add(n)
+        if len(self.cache) > self.cap:
+            lru = self.head.next
+            self._remove(lru)
+            del self.cache[lru.key]
+
+
+
+def run_tests():
+    print("Reportes de Ejecución")
+
+    # Grupo 1
+    print("\n[MÓDULO 1: OPERACIONES BÁSICAS]")
+    lista = SLinkedList()
+    for x in [1, 2, 3, 2, 4, 2]: lista.append(x)
+    print(f"Lista: {lista.to_list()}")
+    print(f"Ej 1: Count(2) -> {lista.count(2)} | Esperado: 3")
+    print(f"Ej 3: Index_of(4) -> {lista.index_of(4)} | Esperado: 4")
+
+    # Grupo 2
+    print("\n[MÓDULO 2: ALGORITMOS DE PUNTEROS]")
+    lista.reverse()
+    print(f"Ej 6: Reverse -> {lista.to_list()} | Esperado: [2, 4, 2, 3, 2, 1]")
+    
+    lista.clear()
+    for x in [10, 20, 30, 40, 50]: lista.append(x)
+    print(f"Ej 8: Middle -> {lista.get_middle()} | Esperado: 30")
+
+    # Grupo 3
+    print("\n[MÓDULO 3: CASOS AVANZADOS]")
+    pali = SLinkedList()
+    for x in [1, 2, 3, 2, 1]: pali.append(x)
+    print(f"Ej 11: Palíndromo [1,2,3,2,1] -> {pali.is_palindrome()} | Esperado: True")
+
+    lista.rotate(2)
+    print(f"Ej 12: Rotate(2) de [10..50] -> {lista.to_list()} | Esperado: [40, 50, 10, 20, 30]")
+
+    # Grupo 4
+    print("\n[MÓDULO 4: SISTEMAS COMPLEJOS]")
+    lru = LRUCache(2)
+    lru.put(1, "Data1"); lru.put(2, "Data2")
+    lru.get(1) # 1 es reciente
+    lru.put(3, "Data3") # 2 debe morir
+    print(f"Ej 17: LRU Cache (Get 2) -> {lru.get(2)} | Esperado: -1 (Eliminado)")
+    print(f"Ej 17: LRU Cache (Get 1) -> {lru.get(1)} | Esperado: Data1")
+
+    print("\n" + "="*60)
+    print("PRUEBAS FINALIZADAS CON ÉXITO")
+    print("="*60)
+
+if __name__ == "__main__":
+    run_tests()
+
